@@ -25,10 +25,13 @@ export function processUserInput({ input, sheetId, cellNumber, callbacks }: Proc
   const scope = getSheetScope(sheetId);
   
   try {
-    const exp = math.parse(input).compile().evaluate(scope);
+    const node = math.parse(input);
 
-    if(typeof exp !== "function") callbacks.text(String(exp));
-    if(typeof exp === "function") callbacks.text(math.parse(exp).toString());
+    if(node.isAssignmentNode && node.value.isFunctionNode){
+      callbacks.text(node.value.toString());
+    }else{
+     callbacks.text(node.compile().evaluate(scope)); 
+    }
   } catch (error) {
     callbacks.text(`Error: ${error instanceof Error ? error.message : 'Error desconocido'}`);
   }
