@@ -28,7 +28,7 @@ export function processUserInput({ input, sheetId, cellNumber, callbacks }: Proc
     const node = math.parse(input);
 
     if(node.isAssignmentNode && node.value.isFunctionNode){
-      callbacks.text(node.value.toString());
+      callbacks.text(String(node.value));
     }else{
      callbacks.text(node.compile().evaluate(scope)); 
     }
