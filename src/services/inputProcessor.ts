@@ -24,12 +24,12 @@ export interface ProcessInputParams {
 export function processUserInput({ input, sheetId, cellNumber, callbacks }: ProcessInputParams): void {
   const scope = getSheetScope(sheetId);
   
-    try {
-      const exp = math.parse(input).compile().evaluate(scope);
-    } catch (error) {
-      callbacks.text(`Error: ${error instanceof Error ? error.message : 'Error desconocido'}`);
-    }
+  try {
+    const exp = math.parse(input).compile().evaluate(scope);
 
-  if(typeof exp !== "function") callbacks.text(String(exp));
-  if(typeof exp === "function") callbacks.text(math.parse(exp).toString());
+    if(typeof exp !== "function") callbacks.text(String(exp));
+    if(typeof exp === "function") callbacks.text(math.parse(exp).toString());
+  } catch (error) {
+    callbacks.text(`Error: ${error instanceof Error ? error.message : 'Error desconocido'}`);
+  }
 }
