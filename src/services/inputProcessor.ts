@@ -30,7 +30,6 @@ export function processUserInput({ input, sheetId, cellNumber, callbacks }: Proc
     } catch (error) {
       callbacks.text(`Error: ${error instanceof Error ? error.message : 'Error desconocido'}`);
     }
-  }
 
   callbacks.text(exp);
 }
