@@ -11,7 +11,7 @@ export function CellOutput({ message }: CellOutputProps) {
     navigator.clipboard.writeText(text);
   };
 
-  if (!message.output) return null;
+  if (message.output === undefined || message.output === null) return null;
 
   const isTextOutput = message.outputType === 'text';
 
@@ -23,16 +23,16 @@ export function CellOutput({ message }: CellOutputProps) {
       <div className="flex-1 relative">
         <div className="py-2">
           {message.outputType === 'image' ? (
-            <img 
-              src={message.output} 
-              alt="Mathematical output" 
+            <img
+              src={message.output}
+              alt="Mathematical output"
               className="max-w-full h-auto"
             />
           ) : message.outputType === 'canvas' ? (
             <div className="bg-white border rounded p-4">
-              <canvas 
-                width="400" 
-                height="300" 
+              <canvas
+                width="400"
+                height="300"
                 className="border"
                 ref={(canvas) => {
                   if (canvas && message.canvasData) {
@@ -55,9 +55,9 @@ export function CellOutput({ message }: CellOutputProps) {
             </div>
           )}
         </div>
-        
+
         <CellActions
-          onEdit={() => {}}
+          onEdit={() => { }}
           onCopy={() => copyToClipboard(message.output || '')}
         />
       </div>

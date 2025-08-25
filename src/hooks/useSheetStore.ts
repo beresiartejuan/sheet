@@ -7,14 +7,16 @@ export function useSheets() {
 
   useEffect(() => {
     const updateSheets = () => setSheets(sheetStore.getSheets());
-    
+
     // Initial load
     updateSheets();
-    
+
     // Subscribe to changes
     const unsubscribe = sheetStore.subscribe(updateSheets);
-    
-    return unsubscribe;
+
+    return () => {
+      unsubscribe()
+    };
   }, []);
 
   return {
@@ -30,20 +32,22 @@ export function useSheetMessages(sheetId: string) {
 
   useEffect(() => {
     const updateMessages = () => setMessages(sheetStore.getSheetMessages(sheetId));
-    
+
     // Initial load
     updateMessages();
-    
+
     // Subscribe to changes
     const unsubscribe = sheetStore.subscribe(updateMessages);
-    
-    return unsubscribe;
+
+    return () => {
+      unsubscribe()
+    };
   }, [sheetId]);
 
   return {
     messages,
     addMessage: (content: string) => sheetStore.addMessage(sheetId, content),
-    updateMessage: (messageId: string, content: string) => 
+    updateMessage: (messageId: string, content: string) =>
       sheetStore.updateMessage(sheetId, messageId, content)
   };
 }
