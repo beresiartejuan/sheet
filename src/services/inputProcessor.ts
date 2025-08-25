@@ -26,9 +26,10 @@ export function processUserInput({ input, sheetId, cellNumber, callbacks }: Proc
   
     try {
       const exp = math.parse(input).compile().evaluate(scope);
-      callbacks.text(String(exp));
     } catch (error) {
       callbacks.text(`Error: ${error instanceof Error ? error.message : 'Error desconocido'}`);
     }
 
+  if(typeof exp !== "function") callbacks.text(String(exp));
+  if(typeof exp === "function") callbacks.text(math.parse(exp).toString());
 }
