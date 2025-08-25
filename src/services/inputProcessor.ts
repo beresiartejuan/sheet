@@ -31,5 +31,4 @@ export function processUserInput({ input, sheetId, cellNumber, callbacks }: Proc
       callbacks.text(`Error: ${error instanceof Error ? error.message : 'Error desconocido'}`);
     }
 
-  callbacks.text(exp);
 }
