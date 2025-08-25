@@ -47,6 +47,7 @@ export function useSheetMessages(sheetId: string) {
   return {
     messages,
     addMessage: (content: string) => sheetStore.addMessage(sheetId, content),
+    reEvaluateMessage: (messageId: string) => sheetStore.reEvaluateMessage(sheetId, messageId),
     updateMessage: (messageId: string, content: string) =>
       sheetStore.updateMessage(sheetId, messageId, content)
   };

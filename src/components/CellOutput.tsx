@@ -3,9 +3,10 @@ import { CellActions } from './CellActions';
 
 interface CellOutputProps {
   message: Message;
+  onReEvaluate: () => void;
 }
 
-export function CellOutput({ message }: CellOutputProps) {
+export function CellOutput({ message, onReEvaluate }: CellOutputProps) {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
   };
@@ -58,6 +59,7 @@ export function CellOutput({ message }: CellOutputProps) {
         <CellActions
           onEdit={() => { }}
           onCopy={() => copyToClipboard(message.output || '')}
+          onReEvaluate={onReEvaluate}
         />
       </div>
     </div>

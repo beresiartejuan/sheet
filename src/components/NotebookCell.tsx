@@ -6,9 +6,10 @@ import { CellOutput } from './CellOutput';
 interface NotebookCellProps {
   message: Message;
   onEdit: (id: string, newContent: string) => void;
+  onReEvaluate: (id: string) => void;
 }
 
-export function NotebookCell({ message, onEdit }: NotebookCellProps) {
+export function NotebookCell({ message, onEdit, onReEvaluate }: NotebookCellProps) {
   const [isEditing, setIsEditing] = React.useState(false);
   const [editContent, setEditContent] = React.useState(message.content);
 
@@ -32,9 +33,13 @@ export function NotebookCell({ message, onEdit }: NotebookCellProps) {
         onEditChange={setEditContent}
         onEditSave={handleSaveEdit}
         onEditCancel={handleCancelEdit}
+        onReEvaluate={() => onReEvaluate(message.id)}
       />
       
-      <CellOutput message={message} />
+      <CellOutput 
+        message={message} 
+        onReEvaluate={() => onReEvaluate(message.id)}
+      />
     </div>
   );
 }

@@ -105,6 +105,7 @@ class SheetStore {
     // Procesar la entrada usando el servicio separado
     processUserInput({
       input: content,
+      sheetId,
       cellNumber,
       callbacks: {
         text: (result: string) => {
@@ -123,6 +124,35 @@ class SheetStore {
     return newMessage;
   }
 
+  reEvaluateMessage(sheetId: string, messageId: string) {
+    const messages = this.getSheetMessages(sheetId);
+    const messageIndex = messages.findIndex(msg => msg.id === messageId);
+    
+    if (messageIndex === -1) return;
+    
+    const message = messages[messageIndex];
+    
+    // Re-procesar la entrada
+    processUserInput({
+      input: message.content,
+      sheetId,
+      cellNumber: message.cellNumber,
+      callbacks: {
+        text: (result: string) => {
+          message.output = result;
+          message.outputType = 'text';
+        },
+        image: (imageUrl: string) => {
+          message.output = imageUrl;
+          message.outputType = 'image';
+        }
+      }
+    });
+    
+    // Actualizar el mensaje en su posición original
+    messages[messageIndex] = message;
+    this.saveSheetMessages(sheetId, messages);
+  }
   updateMessage(sheetId: string, messageId: string, newContent: string) {
     const messages = this.getSheetMessages(sheetId);
     const updatedMessages = messages.map(msg => 

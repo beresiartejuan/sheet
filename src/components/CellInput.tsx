@@ -10,6 +10,7 @@ interface CellInputProps {
   onEditChange: (content: string) => void;
   onEditSave: () => void;
   onEditCancel: () => void;
+  onReEvaluate: () => void;
 }
 
 export function CellInput({ 
@@ -19,7 +20,8 @@ export function CellInput({
   onEditStart, 
   onEditChange, 
   onEditSave, 
-  onEditCancel 
+  onEditCancel,
+  onReEvaluate
 }: CellInputProps) {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -63,6 +65,7 @@ export function CellInput({
         <CellActions
           onEdit={onEditStart}
           onCopy={() => copyToClipboard(message.content)}
+          onReEvaluate={onReEvaluate}
         />
       </div>
     </div>

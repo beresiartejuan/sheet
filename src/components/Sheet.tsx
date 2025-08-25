@@ -14,7 +14,7 @@ interface SheetProps {
 
 export function Sheet({ sheetId, sheetName, onToggleSidebar, isSidebarOpen }: SheetProps) {
   const [inputValue, setInputValue] = useState('');
-  const { messages, addMessage, updateMessage } = useSheetMessages(sheetId);
+  const { messages, addMessage, updateMessage, reEvaluateMessage } = useSheetMessages(sheetId);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Scroll to bottom when new messages are added
@@ -52,6 +52,7 @@ export function Sheet({ sheetId, sheetName, onToggleSidebar, isSidebarOpen }: Sh
                 key={message.id} 
                 message={message} 
                 onEdit={handleEditMessage}
+                onReEvaluate={reEvaluateMessage}
               />
             ))
           )}
