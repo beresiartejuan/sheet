@@ -6,7 +6,10 @@ export function useSheets() {
   const [sheets, setSheets] = useState<SheetInfo[]>([]);
 
   useEffect(() => {
-    const updateSheets = () => setSheets(sheetStore.getSheets());
+    const updateSheets = () => {
+      const newSheets = sheetStore.getSheets();
+      setSheets(newSheets);
+    };
 
     // Initial load
     updateSheets();
@@ -15,7 +18,7 @@ export function useSheets() {
     const unsubscribe = sheetStore.subscribe(updateSheets);
 
     return () => {
-      unsubscribe()
+      unsubscribe();
     };
   }, []);
 
@@ -31,7 +34,10 @@ export function useSheetMessages(sheetId: string) {
   const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
-    const updateMessages = () => setMessages(sheetStore.getSheetMessages(sheetId));
+    const updateMessages = () => {
+      const newMessages = sheetStore.getSheetMessages(sheetId);
+      setMessages(newMessages);
+    };
 
     // Initial load
     updateMessages();
@@ -40,7 +46,7 @@ export function useSheetMessages(sheetId: string) {
     const unsubscribe = sheetStore.subscribe(updateMessages);
 
     return () => {
-      unsubscribe()
+      unsubscribe();
     };
   }, [sheetId]);
 
