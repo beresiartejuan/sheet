@@ -1,8 +1,11 @@
 import { mathScopeManager } from './mathScopeManager';
 import { symbolMemory, StoredFunction, StoredVariable } from './symbolMemory';
+import { PlotCommandParser } from './plotCommandParser';
+import { PlotConfig } from '../components/FunctionPlot';
 export interface ProcessorCallbacks {
   text: (result: string) => void;
   image: (imageUrl: string) => void;
+  plot: (config: PlotConfig) => void;
 }
 
 export interface ProcessInputParams {
@@ -29,6 +32,26 @@ export function processUserInput({ input, sheetId, callbacks }: ProcessInputPara
     if (cleanInput.toLowerCase() === 'clear') {
       clearSheetMemory(sheetId);
       callbacks.text('Memoria limpiada. Todas las funciones y variables han sido eliminadas.');
+      return;
+    }
+
+    // Comando plot
+    if (cleanInput.toLowerCase().startsWith('plot ')) {
+      const plotConfig = PlotCommandParser.parse(cleanInput);
+      if (plotConfig) {
+        // SOLO llamar al callback plot, no al de text
+        callbacks.plot(plotConfig);
+      } else {
+        callbacks.text(`Error: Formato incorrecto. 
+        
+${PlotCommandParser.getHelp()}`);
+      }
+      return;
+    }
+
+    // Help específico para plot
+    if (cleanInput.toLowerCase() === 'plot help' || cleanInput.toLowerCase() === 'help plot') {
+      callbacks.text(PlotCommandParser.getHelp());
       return;
     }
 

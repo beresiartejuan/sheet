@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { NotebookCell } from './NotebookCell';
 import { SheetHeader } from './SheetHeader';
 import { SheetInput } from './SheetInput';
@@ -12,7 +12,7 @@ interface SheetProps {
   isSidebarOpen: boolean;
 }
 
-export function Sheet({ sheetId, sheetName, onToggleSidebar, isSidebarOpen }: SheetProps) {
+export function Sheet({ sheetId, sheetName }: SheetProps) {
   const [inputValue, setInputValue] = useState('');
   const { messages, addMessage, updateMessage, reEvaluateMessage } = useSheetMessages(sheetId);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -48,11 +48,12 @@ export function Sheet({ sheetId, sheetName, onToggleSidebar, isSidebarOpen }: Sh
             <EmptySheet />
           ) : (
             messages.map((message) => (
-              <NotebookCell 
-                key={message.id} 
-                message={message} 
+              <NotebookCell
+                key={message.id}
+                message={message}
                 onEdit={handleEditMessage}
                 onReEvaluate={reEvaluateMessage}
+                sheetId={sheetId}
               />
             ))
           )}

@@ -1,17 +1,20 @@
 import { Message } from '../types';
 import { CellActions } from './CellActions';
+import { FunctionPlot } from './FunctionPlot';
 
 interface CellOutputProps {
   message: Message;
   onReEvaluate: () => void;
+  sheetId?: string;
 }
 
-export function CellOutput({ message, onReEvaluate }: CellOutputProps) {
+export function CellOutput({ message, onReEvaluate, sheetId = '' }: CellOutputProps) {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
   };
 
-  if (message.output === undefined || message.output === null) return null;
+  if (message.outputType === 'plot' && !message.plotData) return null;
+  if (message.outputType !== 'plot' && (message.output === undefined || message.output === null)) return null;
 
   const isTextOutput = message.outputType === 'text';
 
@@ -48,6 +51,10 @@ export function CellOutput({ message, onReEvaluate }: CellOutputProps) {
                   }
                 }}
               />
+            </div>
+          ) : message.outputType === 'plot' && message.plotData ? (
+            <div className="my-4">
+              <FunctionPlot config={message.plotData} sheetId={sheetId} />
             </div>
           ) : (
             <div className="font-mono text-gray-700 text-base">

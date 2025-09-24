@@ -3,7 +3,7 @@ import { processUserInput } from '../services/inputProcessor';
 
 class SheetStore {
   private listeners: Set<() => void> = new Set();
-  
+
   // Subscribe to store changes
   subscribe(listener: () => void) {
     this.listeners.add(listener);
@@ -19,7 +19,7 @@ class SheetStore {
   getSheets(): SheetInfo[] {
     const savedSheets = sessionStorage.getItem('math-sheets');
     if (savedSheets) {
-      return JSON.parse(savedSheets).map((sheet: any) => ({
+      return JSON.parse(savedSheets).map((sheet: { createdAt: string }) => ({
         ...sheet,
         createdAt: new Date(sheet.createdAt)
       }));
@@ -39,7 +39,7 @@ class SheetStore {
       name: `Hoja ${sheets.length + 1}`,
       createdAt: new Date()
     };
-    
+
     const updatedSheets = [...sheets, newSheet];
     this.saveSheets(updatedSheets);
     return newSheet;
@@ -48,10 +48,10 @@ class SheetStore {
   deleteSheet(sheetId: string) {
     const sheets = this.getSheets();
     if (sheets.length <= 1) return false; // Don't delete the last sheet
-    
+
     const updatedSheets = sheets.filter(sheet => sheet.id !== sheetId);
     this.saveSheets(updatedSheets);
-    
+
     // Remove sheet data from sessionStorage
     sessionStorage.removeItem(`sheet-data-${sheetId}`);
     return true;
@@ -59,7 +59,7 @@ class SheetStore {
 
   renameSheet(sheetId: string, newName: string) {
     const sheets = this.getSheets();
-    const updatedSheets = sheets.map(sheet => 
+    const updatedSheets = sheets.map(sheet =>
       sheet.id === sheetId ? { ...sheet, name: newName } : sheet
     );
     this.saveSheets(updatedSheets);
@@ -89,14 +89,14 @@ class SheetStore {
     const messages = this.getSheetMessages(sheetId);
     const cellNumber = messages.length + 1;
     const isFormula = content.includes('=') || /[+\-*/^()√∫∑]/.test(content);
-    
+
     // Crear mensaje base
-    let newMessage: Message = {
+    const newMessage: Message = {
       id: Date.now().toString(),
       type: 'cell',
       content: content.trim(),
       output: '',
-      outputType: 'text',
+      outputType: 'text', // Se cambiará según el callback usado
       isFormula,
       timestamp: new Date(),
       cellNumber
@@ -115,6 +115,11 @@ class SheetStore {
         image: (imageUrl: string) => {
           newMessage.output = imageUrl;
           newMessage.outputType = 'image';
+        },
+        plot: (plotConfig) => {
+          newMessage.plotData = plotConfig;
+          newMessage.outputType = 'plot';
+          // NO establecer output de texto, solo la data de la gráfica
         }
       }
     });
@@ -127,11 +132,11 @@ class SheetStore {
   reEvaluateMessage(sheetId: string, messageId: string) {
     const messages = this.getSheetMessages(sheetId);
     const messageIndex = messages.findIndex(msg => msg.id === messageId);
-    
+
     if (messageIndex === -1) return;
-    
+
     const message = messages[messageIndex];
-    
+
     // Re-procesar la entrada
     processUserInput({
       input: message.content,
@@ -145,23 +150,28 @@ class SheetStore {
         image: (imageUrl: string) => {
           message.output = imageUrl;
           message.outputType = 'image';
+        },
+        plot: (plotConfig) => {
+          message.plotData = plotConfig;
+          message.outputType = 'plot';
+          // NO establecer output de texto, solo la data de la gráfica
         }
       }
     });
-    
+
     // Actualizar el mensaje en su posición original
     messages[messageIndex] = message;
     this.saveSheetMessages(sheetId, messages);
   }
   updateMessage(sheetId: string, messageId: string, newContent: string) {
     const messages = this.getSheetMessages(sheetId);
-    const updatedMessages = messages.map(msg => 
-      msg.id === messageId 
-        ? { 
-            ...msg, 
-            content: newContent, 
-            isFormula: newContent.includes('=') || /[+\-*/^()√∫∑]/.test(newContent) 
-          }
+    const updatedMessages = messages.map(msg =>
+      msg.id === messageId
+        ? {
+          ...msg,
+          content: newContent,
+          isFormula: newContent.includes('=') || /[+\-*/^()√∫∑]/.test(newContent)
+        }
         : msg
     );
     this.saveSheetMessages(sheetId, updatedMessages);
