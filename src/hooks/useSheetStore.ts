@@ -26,7 +26,7 @@ export function useSheets() {
     loadSheets();
     const unsubscribe = sheetService.subscribe(loadSheets);
     return unsubscribe;
-  }, [startLoading, stopLoading, setLoadingError]);
+  }, [startLoading, stopLoading, setLoadingError]); // Ahora son estables con useCallback
 
   const createSheet = useCallback(() => {
     startLoading();
@@ -104,9 +104,9 @@ export function useSheetMessages(sheetId: string) {
     }
   }, [sheetId, startLoading, stopLoading, setLoadingError]);
 
-  const updateMessage = useCallback((_messageId: string, _content: string) => {
+  const updateMessage = useCallback((messageId: string, content: string) => {
     // TODO: Implement update functionality in sheetService
-    console.warn('Update message functionality not yet implemented');
+    console.warn('Update message functionality not yet implemented', { messageId, content });
   }, []);
 
   return {

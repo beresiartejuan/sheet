@@ -1,7 +1,18 @@
 import { mathScopeManager } from './mathScopeManager';
 import { symbolMemory, StoredFunction, StoredVariable } from './symbolMemory';
-import { PlotCommandParser } from './plotCommandParser';
 import { PlotConfig } from '../components/FunctionPlot';
+import { commandRegistry, CommandCallbacks } from './customCommandSystem';
+import { registerBuiltinCommands } from './builtinCommands';
+
+// Asegurar que los comandos built-in estén registrados
+let commandsInitialized = false;
+function ensureCommandsInitialized() {
+  if (!commandsInitialized) {
+    registerBuiltinCommands();
+    commandsInitialized = true;
+  }
+}
+
 export interface ProcessorCallbacks {
   text: (result: string) => void;
   image: (imageUrl: string) => void;
@@ -15,45 +26,37 @@ export interface ProcessInputParams {
   callbacks: ProcessorCallbacks;
 }
 
-export function processUserInput({ input, sheetId, callbacks }: ProcessInputParams): void {
+export async function processUserInput({ input, sheetId, cellNumber, callbacks }: ProcessInputParams): Promise<void> {
   try {
+    ensureCommandsInitialized();
+
     const cleanInput = input.trim();
     if (!cleanInput) {
       callbacks.text('');
       return;
     }
 
-    // Comandos especiales
-    if (cleanInput.toLowerCase() === 'help' || cleanInput === '?') {
-      callbacks.text(getSymbolsSummary(sheetId));
-      return;
+    // ✨ **NUEVO SISTEMA**: Intentar ejecutar comandos personalizados primero
+    const commandCallbacks: CommandCallbacks = {
+      text: callbacks.text,
+      image: callbacks.image,
+      plot: callbacks.plot,
+      error: (message: string) => callbacks.text(`❌ ${message}`)
+    };
+
+    const commandExecuted = await commandRegistry.tryExecute(
+      cleanInput,
+      sheetId,
+      cellNumber,
+      commandCallbacks
+    );
+
+    if (commandExecuted) {
+      return; // Comando personalizado manejó la entrada
     }
 
-    if (cleanInput.toLowerCase() === 'clear') {
-      clearSheetMemory(sheetId);
-      callbacks.text('Memoria limpiada. Todas las funciones y variables han sido eliminadas.');
-      return;
-    }
-
-    // Comando plot
-    if (cleanInput.toLowerCase().startsWith('plot ')) {
-      const plotConfig = PlotCommandParser.parse(cleanInput);
-      if (plotConfig) {
-        // SOLO llamar al callback plot, no al de text
-        callbacks.plot(plotConfig);
-      } else {
-        callbacks.text(`Error: Formato incorrecto. 
-        
-${PlotCommandParser.getHelp()}`);
-      }
-      return;
-    }
-
-    // Help específico para plot
-    if (cleanInput.toLowerCase() === 'plot help' || cleanInput.toLowerCase() === 'help plot') {
-      callbacks.text(PlotCommandParser.getHelp());
-      return;
-    }
+    // **FALLBACK**: Mantener lógica legacy para compatibilidad
+    // (Estos comandos se migrarán gradualmente al nuevo sistema)
 
     const node = mathScopeManager.parse(cleanInput);
     const scope = mathScopeManager.getScope(sheetId);
