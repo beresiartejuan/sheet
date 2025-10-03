@@ -10,16 +10,16 @@ interface CellInputProps {
   onEditChange: (content: string) => void;
   onEditSave: () => void;
   onEditCancel: () => void;
-  onReEvaluate: () => void;
+  onReEvaluate: () => Promise<void>;
 }
 
-export function CellInput({ 
-  message, 
-  isEditing, 
-  editContent, 
-  onEditStart, 
-  onEditChange, 
-  onEditSave, 
+export function CellInput({
+  message,
+  isEditing,
+  editContent,
+  onEditStart,
+  onEditChange,
+  onEditSave,
   onEditCancel,
   onReEvaluate
 }: CellInputProps) {
@@ -55,13 +55,13 @@ export function CellInput({
           />
         ) : (
           <div className="py-2 hover:bg-gray-50 transition-colors cursor-pointer"
-               onClick={onEditStart}>
+            onClick={onEditStart}>
             <div className="font-mono text-blue-900 text-base">
               {message.content}
             </div>
           </div>
         )}
-        
+
         <CellActions
           onEdit={onEditStart}
           onCopy={() => copyToClipboard(message.content)}

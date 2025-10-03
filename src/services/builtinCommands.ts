@@ -109,8 +109,6 @@ const solveCommand: CustomCommand = {
             const equation = context.args[0];
             const variable = context.args[1];
 
-            console.log(`Intentando resolver: ${equation} para ${variable}`);
-
             // Convertir ecuación al formato que espera Algebrite
             // De "x + 2 = 2" a "x + 2 - 2"
             const sides = equation.split('=');
@@ -125,22 +123,15 @@ const solveCommand: CustomCommand = {
             // Crear la expresión igualada a cero
             const expression = `${leftSide} - (${rightSide})`;
 
-            console.log(`Expresión a resolver: ${expression} = 0 para ${variable}`);
-
             // Usar Algebrite para resolver la ecuación
             const solutionResult = Algebrite.run(`roots(${expression})`);
 
-            console.log('Resultado de Algebrite:', solutionResult);
-
             // Procesar el resultado
-            console.log('Revisando resultado:', JSON.stringify(solutionResult));
-            console.log('Condición vacía:', !solutionResult || solutionResult.trim() === '');
 
             if (!solutionResult || solutionResult.trim() === '') {
                 // Si Algebrite no encuentra solución, intentar evaluación numérica
                 try {
                     const numericResult = Algebrite.run(`float(roots(${expression}))`);
-                    console.log('Resultado numérico:', numericResult);
 
                     if (numericResult && numericResult.trim() !== '') {
                         callbacks.text(`🔍 **Solución numérica para ${equation}:**
@@ -161,7 +152,6 @@ ${equation}
 *Error: ${numError instanceof Error ? numError.message : 'Error desconocido'}*`);
                 }
             } else {
-                console.log('Entrando al bloque else, resultado válido encontrado');
                 // Formatear la solución
                 let formattedSolution = solutionResult;
 
@@ -170,8 +160,11 @@ ${equation}
                     formattedSolution = solutionResult.replace(/\[|\]/g, '').split(',').map((s: string) => s.trim()).join(', ');
                 }
 
-                console.log('Llamando callbacks.text con:', formattedSolution);
-                callbacks.text(`${variable} = ${formattedSolution}`);
+                callbacks.text(`🔍 **Solución para ${equation}:**
+
+${variable} = ${formattedSolution}
+
+*Resuelto simbólicamente usando Algebrite*`);
             }
 
         } catch (error) {

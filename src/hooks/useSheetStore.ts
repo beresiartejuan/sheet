@@ -94,9 +94,9 @@ export function useSheetMessages(sheetId: string) {
     }
   }, [sheetId, startLoading, stopLoading, setLoadingError]);
 
-  const reEvaluateMessage = useCallback((messageId: string) => {
+  const reEvaluateMessage = useCallback(async (messageId: string) => {
     startLoading();
-    const result = sheetService.reEvaluateMessage(sheetId, messageId);
+    const result = await sheetService.reEvaluateMessage(sheetId, messageId);
     if (result.success) {
       stopLoading();
     } else {

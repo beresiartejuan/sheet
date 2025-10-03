@@ -38,10 +38,7 @@ export async function processUserInput({ input, sheetId, cellNumber, callbacks }
 
     // ✨ **NUEVO SISTEMA**: Intentar ejecutar comandos personalizados primero
     const commandCallbacks: CommandCallbacks = {
-      text: (result: string) => {
-        console.log('📝 inputProcessor recibió callback.text:', result);
-        callbacks.text(result);
-      },
+      text: callbacks.text,
       image: callbacks.image,
       plot: callbacks.plot,
       error: (message: string) => callbacks.text(`❌ ${message}`)

@@ -4,7 +4,7 @@ import { FunctionPlot } from './FunctionPlot';
 
 interface CellOutputProps {
   message: Message;
-  onReEvaluate: () => void;
+  onReEvaluate: () => Promise<void>;
   sheetId?: string;
 }
 

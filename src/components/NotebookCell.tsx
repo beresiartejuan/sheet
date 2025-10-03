@@ -6,7 +6,7 @@ import { CellOutput } from './CellOutput';
 interface NotebookCellProps {
   message: Message;
   onEdit: (id: string, newContent: string) => void;
-  onReEvaluate: (id: string) => void;
+  onReEvaluate: (id: string) => Promise<void>;
   sheetId: string;
 }
 
