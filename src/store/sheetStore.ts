@@ -85,7 +85,7 @@ class SheetStore {
     this.notify();
   }
 
-  addMessage(sheetId: string, content: string): Message {
+  async addMessage(sheetId: string, content: string): Promise<Message> {
     const messages = this.getSheetMessages(sheetId);
     const cellNumber = messages.length + 1;
     const isFormula = content.includes('=') || /[+\-*/^()√∫∑]/.test(content);
@@ -103,7 +103,7 @@ class SheetStore {
     };
 
     // Procesar la entrada usando el servicio separado
-    processUserInput({
+    await processUserInput({
       input: content,
       sheetId,
       cellNumber,
@@ -129,7 +129,7 @@ class SheetStore {
     return newMessage;
   }
 
-  reEvaluateMessage(sheetId: string, messageId: string) {
+  async reEvaluateMessage(sheetId: string, messageId: string) {
     const messages = this.getSheetMessages(sheetId);
     const messageIndex = messages.findIndex(msg => msg.id === messageId);
 
@@ -138,7 +138,7 @@ class SheetStore {
     const message = messages[messageIndex];
 
     // Re-procesar la entrada
-    processUserInput({
+    await processUserInput({
       input: message.content,
       sheetId,
       cellNumber: message.cellNumber,

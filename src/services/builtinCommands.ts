@@ -103,21 +103,80 @@ const solveCommand: CustomCommand = {
         }
 
         try {
-            // Importar mathjs dinámicamente para resolver
-            const math = await import('mathjs');
+            // Importar Algebrite para resolución simbólica
+            const Algebrite = await import('algebrite') as { run: (expression: string) => string };
 
             const equation = context.args[0];
             const variable = context.args[1];
 
-            // Intentar resolver usando mathjs
-            // Nota: esto es una implementación básica, se puede mejorar
-            const result = math.evaluate(`solve([${equation}], [${variable}])`);
+            console.log(`Intentando resolver: ${equation} para ${variable}`);
 
-            callbacks.text(`🔍 **Solución para ${equation}:**
-Variable: ${variable}
-Resultado: ${JSON.stringify(result)}`);
+            // Convertir ecuación al formato que espera Algebrite
+            // De "x + 2 = 2" a "x + 2 - 2"
+            const sides = equation.split('=');
+            if (sides.length !== 2) {
+                callbacks.error('La ecuación debe tener el formato: expresión = expresión');
+                return;
+            }
+
+            const leftSide = sides[0].trim();
+            const rightSide = sides[1].trim();
+
+            // Crear la expresión igualada a cero
+            const expression = `${leftSide} - (${rightSide})`;
+
+            console.log(`Expresión a resolver: ${expression} = 0 para ${variable}`);
+
+            // Usar Algebrite para resolver la ecuación
+            const solutionResult = Algebrite.run(`roots(${expression})`);
+
+            console.log('Resultado de Algebrite:', solutionResult);
+
+            // Procesar el resultado
+            console.log('Revisando resultado:', JSON.stringify(solutionResult));
+            console.log('Condición vacía:', !solutionResult || solutionResult.trim() === '');
+
+            if (!solutionResult || solutionResult.trim() === '') {
+                // Si Algebrite no encuentra solución, intentar evaluación numérica
+                try {
+                    const numericResult = Algebrite.run(`float(roots(${expression}))`);
+                    console.log('Resultado numérico:', numericResult);
+
+                    if (numericResult && numericResult.trim() !== '') {
+                        callbacks.text(`🔍 **Solución numérica para ${equation}:**
+
+${variable} = ${numericResult}
+
+*Resuelto usando métodos numéricos*`);
+                    } else {
+                        callbacks.text(`🔍 **No se encontró solución para:**
+${equation}
+
+*La ecuación podría no tener solución real o estar fuera del alcance del solucionador.*`);
+                    }
+                } catch (numError) {
+                    callbacks.text(`🔍 **No se encontró solución para:**
+${equation}
+
+*Error: ${numError instanceof Error ? numError.message : 'Error desconocido'}*`);
+                }
+            } else {
+                console.log('Entrando al bloque else, resultado válido encontrado');
+                // Formatear la solución
+                let formattedSolution = solutionResult;
+
+                // Si es un array de soluciones, formatear mejor
+                if (solutionResult.includes('[') && solutionResult.includes(']')) {
+                    formattedSolution = solutionResult.replace(/\[|\]/g, '').split(',').map((s: string) => s.trim()).join(', ');
+                }
+
+                console.log('Llamando callbacks.text con:', formattedSolution);
+                callbacks.text(`${variable} = ${formattedSolution}`);
+            }
+
         } catch (error) {
-            callbacks.error(`No se pudo resolver la ecuación: ${error instanceof Error ? error.message : 'Error desconocido'}`);
+            console.error('Error en solve command:', error);
+            callbacks.error(`Error resolviendo la ecuación: ${error instanceof Error ? error.message : 'Error desconocido'}`);
         }
     }
 };

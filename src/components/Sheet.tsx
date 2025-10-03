@@ -26,10 +26,10 @@ export function Sheet({ sheetId, sheetName }: SheetProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!inputValue.trim()) return;
 
-    addMessage(inputValue);
+    await addMessage(inputValue);
     setInputValue('');
   };
 

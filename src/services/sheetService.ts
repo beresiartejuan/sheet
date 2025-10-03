@@ -174,7 +174,7 @@ export class SheetService {
     /**
      * Añade un nuevo mensaje a una hoja
      */
-    addMessage(sheetId: string, content: string): SheetOperationResult<Message> {
+    async addMessage(sheetId: string, content: string): Promise<SheetOperationResult<Message>> {
         // Validar entrada
         const validation = this.validateInput(content);
         if (!validation.isValid) {
@@ -219,7 +219,7 @@ export class SheetService {
         };
 
         try {
-            processUserInput({
+            await processUserInput({
                 input: content,
                 sheetId,
                 cellNumber,
@@ -246,7 +246,7 @@ export class SheetService {
     /**
      * Re-evalúa un mensaje existente
      */
-    reEvaluateMessage(sheetId: string, messageId: string): SheetOperationResult {
+    async reEvaluateMessage(sheetId: string, messageId: string): Promise<SheetOperationResult> {
         const messagesResult = this.getSheetMessages(sheetId);
         if (!messagesResult.success) {
             return { success: false, error: messagesResult.error };
@@ -278,7 +278,7 @@ export class SheetService {
         };
 
         try {
-            processUserInput({
+            await processUserInput({
                 input: message.content,
                 sheetId,
                 cellNumber: message.cellNumber,

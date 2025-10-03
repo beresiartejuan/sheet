@@ -132,7 +132,9 @@ class CommandRegistry {
                 rawArgs: args.join(' ')
             };
 
+            console.log(`🚀 Ejecutando comando: ${command.name}`);
             await command.executor(context, callbacks);
+            console.log(`✅ Comando ${command.name} ejecutado exitosamente`);
             return true; // Comando ejecutado exitosamente
         } catch (error) {
             callbacks.error(`Error en comando '${command.name}': ${error instanceof Error ? error.message : 'Error desconocido'}`);

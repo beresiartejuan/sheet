@@ -84,9 +84,9 @@ export function useSheetMessages(sheetId: string) {
     return unsubscribe;
   }, [sheetId]);
 
-  const addMessage = useCallback((content: string) => {
+  const addMessage = useCallback(async (content: string) => {
     startLoading();
-    const result = sheetService.addMessage(sheetId, content);
+    const result = await sheetService.addMessage(sheetId, content);
     if (result.success) {
       stopLoading();
     } else {
