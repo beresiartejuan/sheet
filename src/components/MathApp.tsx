@@ -3,10 +3,10 @@ import { PlusCircle, FileText } from 'lucide-react';
 import { Sheet } from './Sheet';
 import { Sidebar } from './Sidebar';
 import { LoadingOverlay } from './LoadingComponents';
-import { useSheetStore } from '../hooks/useSheetStore';
+import { useSheets } from '../hooks/useSheetStore';
 
 export function MathApp() {
-  const { sheets, error, isLoading, createSheet, deleteSheet, renameSheet } = useSheetStore();
+  const { sheets, error, isLoading, createSheet, deleteSheet, renameSheet } = useSheets();
   const [activeSheetId, setActiveSheetId] = useState<string>('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
