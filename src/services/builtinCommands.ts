@@ -160,11 +160,7 @@ ${equation}
                     formattedSolution = solutionResult.replace(/\[|\]/g, '').split(',').map((s: string) => s.trim()).join(', ');
                 }
 
-                callbacks.text(`🔍 **Solución para ${equation}:**
-
-${variable} = ${formattedSolution}
-
-*Resuelto simbólicamente usando Algebrite*`);
+                callbacks.text(`${variable} = ${formattedSolution}`);
             }
 
         } catch (error) {
