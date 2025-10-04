@@ -1,4 +1,4 @@
-import { Edit2, Copy, RefreshCw } from 'lucide-react';
+import { CreditCard as Edit2, Copy, RefreshCw } from 'lucide-react';
 
 interface CellActionsProps {
   onEdit: () => void;
