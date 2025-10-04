@@ -20,11 +20,9 @@ export function useTheme() {
 
   useEffect(() => {
     // Aplicar el tema al documento
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    const root = document.documentElement;
+    root.classList.remove('light', 'dark');
+    root.classList.add(theme);
     
     // Guardar en localStorage
     localStorage.setItem('theme', theme);

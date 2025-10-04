@@ -4,8 +4,10 @@ import { Sheet } from './Sheet';
 import { Sidebar } from './Sidebar';
 import { LoadingOverlay } from './LoadingComponents';
 import { useSheets } from '../hooks/useSheetStore';
+import { useTheme } from '../hooks/useTheme';
 
 export function MathApp() {
+  const { theme } = useTheme();
   const [activeSheetId, setActiveSheetId] = useState<string>('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const { sheets, isLoading, error, createSheet, deleteSheet, renameSheet } = useSheets();
@@ -61,7 +63,8 @@ export function MathApp() {
   }
 
   return (
-    <div className="h-screen bg-white flex relative">
+    <div className={`h-screen flex relative ${theme === 'dark' ? 'dark' : ''}`}>
+      <div className="h-screen bg-white dark:bg-gray-900 flex relative w-full">
       <LoadingOverlay isVisible={isLoading} text="Cargando hojas..." type="spinner" />
 
       <Sidebar
@@ -100,6 +103,7 @@ export function MathApp() {
           </div>
         ) : null}
       </main>
+      </div>
     </div>
   );
 }
