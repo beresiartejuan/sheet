@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { PlusCircle, FileText, Trash2, CreditCard as Edit2, Check, X, Menu } from 'lucide-react';
 import { SheetInfo } from '../types';
+import { ThemeToggle } from './ThemeToggle';
 
 interface SidebarProps {
   sheets: SheetInfo[];
