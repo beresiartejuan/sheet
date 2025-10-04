@@ -3,16 +3,19 @@ import { PlusCircle, FileText } from 'lucide-react';
 import { Sheet } from './Sheet';
 import { Sidebar } from './Sidebar';
 import { LoadingOverlay } from './LoadingComponents';
-import { useTheme } from '../hooks/useTheme';
+import { useSheetStore } from '../hooks/useSheetStore';
 
 export function MathApp() {
+  const { sheets, error, isLoading, createSheet, deleteSheet, renameSheet } = useSheetStore();
   const [activeSheetId, setActiveSheetId] = useState<string>('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   // Set active sheet when sheets change
   useEffect(() => {
-    if (sheets.length > 0 && !activeSheetId) {
+    if (sheets.length > 0 && (!activeSheetId || !sheets.find(sheet => sheet.id === activeSheetId))) {
       setActiveSheetId(sheets[0].id);
+    } else if (sheets.length === 0) {
+      setActiveSheetId('');
     }
   }, [sheets, activeSheetId]);
 
@@ -28,12 +31,6 @@ export function MathApp() {
   const handleDeleteSheet = (sheetId: string) => {
     try {
       deleteSheet(sheetId);
-
-      // If active sheet was deleted, switch to first available
-      if (activeSheetId === sheetId) {
-        const remainingSheets = sheets.filter(sheet => sheet.id !== sheetId);
-        setActiveSheetId(remainingSheets[0]?.id || '');
-      }
     } catch (err) {
       console.error('Error deleting sheet:', err);
     }
