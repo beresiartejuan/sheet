@@ -3,13 +3,11 @@ import { PlusCircle, FileText } from 'lucide-react';
 import { Sheet } from './Sheet';
 import { Sidebar } from './Sidebar';
 import { LoadingOverlay } from './LoadingComponents';
-import { useSheets } from '../hooks/useSheetStore';
 import { useTheme } from '../hooks/useTheme';
 
 export function MathApp() {
   const [activeSheetId, setActiveSheetId] = useState<string>('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const { sheets, isLoading, error, createSheet, deleteSheet, renameSheet } = useSheets();
 
   // Set active sheet when sheets change
   useEffect(() => {
