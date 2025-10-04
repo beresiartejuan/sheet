@@ -86,7 +86,7 @@ export function MathApp() {
           />
         ) : !isLoading ? (
           <div className="h-full flex items-center justify-center">
-            <div className="text-center text-gray-500">
+            <div className="text-center text-gray-500 dark:text-gray-400">
               <FileText className="w-12 h-12 mx-auto mb-4 text-gray-300" />
               <p className="text-lg mb-4">No hay hojas disponibles</p>
               <button
