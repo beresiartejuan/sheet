@@ -134,11 +134,7 @@ const solveCommand: CustomCommand = {
                     const numericResult = Algebrite.run(`float(roots(${expression}))`);
 
                     if (numericResult && numericResult.trim() !== '') {
-                        callbacks.text(`🔍 **Solución numérica para ${equation}:**
-
-${variable} = ${numericResult}
-
-*Resuelto usando métodos numéricos*`);
+                        callbacks.text(`${variable} = ${numericResult}`);
                     } else {
                         callbacks.text(`🔍 **No se encontró solución para:**
 ${equation}
